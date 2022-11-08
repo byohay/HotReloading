@@ -742,7 +742,7 @@ public class SwiftEval: NSObject {
     }
 
     static let quickFiles = getenv("INJECTION_QUICK_FILES").flatMap {
-        String(cString: $0) } ?? "Debug-*/{Quick*,Nimble,Cwl*}.o"
+        String(cString: $0) } ?? "Debug-*/Nimble.framework/Nimble"
     static let quickDylib = "_spec.dylib"
     static let dylibDelim = "==="
     static let parsePlatform = try! NSRegularExpression(pattern:
