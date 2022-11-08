@@ -896,9 +896,31 @@ public class SwiftEval: NSObject {
         }
     }()
 
+    lazy var loadTestsBundle: () = {
+        let (_, logsDir) = try! determineEnvironment(classNameOrFile: "")
+        let productName: String = Bundle.main.infoDictionary![kCFBundleNameKey as String] as! String
+
+        #if targetEnvironment(simulator)
+        let sdk = "iphonesimulator"
+        #else
+        let sdk = "iphone"
+        #endif
+
+        let testsBundlePath = "\(logsDir.path)/../../Build/Products/Debug-\(sdk)/\(productName).app/PlugIns/\(productName)Tests.xctest/\(productName)Tests"
+        if !FileManager.default.fileExists(atPath: testsBundlePath) {
+            print(APP_PREFIX+"⚠️ Tests bundle wasn't found - did you run the tests target before running the application?")
+            return
+        }
+
+        if dlopen(testsBundlePath, RTLD_LAZY) == nil {
+            debug(String(cString: dlerror()))
+        }
+    }()
+
     @objc func loadAndInject(tmpfile: String, oldClass: AnyClass? = nil)
         throws -> [AnyClass] {
         _ = loadXCTest
+        _ = loadTestsBundle
 
         print("\(APP_PREFIX)Loading .dylib ...")
         // load patched .dylib into process with new version of class
