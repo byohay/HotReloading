@@ -271,15 +271,6 @@ public class SwiftEval: NSObject {
                         """)
         }
 
-        if false == (try? String(contentsOf: projectFile
-            .appendingPathComponent("project.pbxproj")))?.contains("-interposable") {
-            print(APP_PREFIX+"""
-                ⚠️ Project file does not contain the -interposable linker flag. \
-                If you want to be able to inject methods of structs and final classes, \
-                please add \"Other Linker Flags\" -Xlinker -interposable.
-                """)
-        }
-
         return (projectFile, logsDir)
     }
 
